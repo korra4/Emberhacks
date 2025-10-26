@@ -39,25 +39,25 @@ public class SyllabusModel {
             Assessment, Weight (%), Grade (%)
             Only output valid CSV — no explanations or extra text.
         """;
+        byte[] pdfBytes = Files.readAllBytes(pdfFile.toPath());
 
-        /*
         Content content = Content.fromParts(
-                Part.fromUri(pdfFile.getAbsolutePath(), "application/pdf"),
+                Part.fromBytes(pdfBytes, "application/pdf"),
                 Part.fromText(prompt));
 
         // Combine the text prompt and the PDF file in one request
         GenerateContentResponse response = client.models.generateContent("models/gemini-2.5-flash",
                         content, null);
-         */
 
-        Path pdfPath = pdfFile.toPath();
-        String publicUrl = PdfUploader.uploadPdf(pdfPath);
 
-        Content content = Content.fromParts(
-                Part.fromUri(publicUrl, "application/pdf"),
-                Part.fromText(prompt)
-        );
-        GenerateContentResponse response = client.models.generateContent("models/gemini-2.5-flash", content, null);
+//        Path pdfPath = pdfFile.toPath();
+//        String publicUrl = PdfUploader.uploadPdf(pdfPath);
+
+//        Content content = Content.fromParts(
+//                Part.fromUri(publicUrl, "application/pdf"),
+//                Part.fromText(prompt)
+//        );
+//        GenerateContentResponse response = client.models.generateContent("models/gemini-2.5-flash", content, null);
 
         String csvOutput = response.text();
         if (csvOutput == null || csvOutput.isBlank()) {
