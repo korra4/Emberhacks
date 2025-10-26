@@ -41,8 +41,7 @@ public class SyllabusController {
         }
 
         try {
-            String text = model.extractTextFromPDF(selectedPDF);
-            List<String[]> parsed = model.parseSyllabus(text);
+            String parsed = model.generateCSVFromPDF(selectedPDF);
 
             if (parsed.isEmpty()) {
                 view.getStatusLabel().setText("❌ Could not find any assessment patterns in the PDF.");
@@ -60,6 +59,8 @@ public class SyllabusController {
 
         } catch (IOException ex) {
             view.getStatusLabel().setText("⚠️ Error reading PDF: " + ex.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }
