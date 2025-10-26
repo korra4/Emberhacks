@@ -1,5 +1,6 @@
 package ca.utoronto.utm.SuperGradeTracker;
 
+import com.google.genai.types.Part;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import java.io.*;
@@ -7,10 +8,8 @@ import java.util.*;
 import java.util.regex.*;
 
 import com.google.genai.Client;
+import com.google.genai.types.Content;
 import com.google.genai.types.GenerateContentResponse;
-import com.google.ai.client.generativeai.Client;
-import com.google.ai.client.generativeai.type.Content;
-import com.google.ai.client.generativeai.type.GenerateContentResponse;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -38,12 +37,15 @@ public class SyllabusModel {
             Only output valid CSV — no explanations or extra text.
         """;
 
-        // Combine the text prompt and the PDF file in one request
-        GenerateContentResponse response = client.models()
-                .generateContent("gemini-1.5-pro",
-                        Content.of(prompt, pdfFile));
+        Content content = Content.fromParts(
+                Part.fromUri(pdfFile.getAbsolutePath(), "application/pdf"),
+                Part.fromText(prompt));
 
-        String csvOutput = response.getText();
+        // Combine the text prompt and the PDF file in one request
+        GenerateContentResponse response = client.models.generateContent("gemini-1.5-pro",
+                        content, null);
+
+        String csvOutput = response.text();
         if (csvOutput == null || csvOutput.isBlank()) {
             throw new IOException("Gemini API returned empty CSV output.");
         }
