@@ -2,7 +2,6 @@ package ca.utoronto.utm.SuperGradeTracker;
 
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -12,40 +11,55 @@ public class SyllabusController {
     private final SyllabusModel model;
     private final SyllabusView view;
     private final Stage stage;
+    private File selectedPDF;
 
     public SyllabusController(SyllabusModel model, SyllabusView view, Stage stage) {
         this.model = model;
         this.view = view;
         this.stage = stage;
 
-        view.getGenerateButton().setOnAction(e -> handleGenerate());
+        view.getSelectPDFButton().setOnAction(e -> handleSelectPDF());
+        view.getGenerateCSVButton().setOnAction(e -> handleGenerateCSV());
     }
 
-    private void handleGenerate() {
-        String text = view.getSyllabusArea().getText();
-        if (text.isBlank()) {
-            view.getStatusLabel().setText("❌ Please paste your syllabus first.");
-            return;
-        }
-
-        List<String[]> parsed = model.parseSyllabus(text);
-        if (parsed.isEmpty()) {
-            view.getStatusLabel().setText("❌ Couldn’t find any 'Assessment - 20%' patterns.");
-            return;
-        }
-
+    private void handleSelectPDF() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save CSV File");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
-        File file = fileChooser.showSaveDialog(stage);
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+        selectedPDF = fileChooser.showOpenDialog(stage);
 
-        if (file != null) {
-            try {
-                model.saveCSV(file, parsed);
-                view.getStatusLabel().setText("✅ CSV created: " + file.getName());
-            } catch (IOException ex) {
-                view.getStatusLabel().setText("⚠️ Error saving file: " + ex.getMessage());
+        if (selectedPDF != null) {
+            view.getFileLabel().setText("Selected: " + selectedPDF.getName());
+        } else {
+            view.getFileLabel().setText("No file selected");
+        }
+    }
+
+    private void handleGenerateCSV() {
+        if (selectedPDF == null) {
+            view.getStatusLabel().setText("❌ Please select a PDF first.");
+            return;
+        }
+
+        try {
+            String text = model.extractTextFromPDF(selectedPDF);
+            List<String[]> parsed = model.parseSyllabus(text);
+
+            if (parsed.isEmpty()) {
+                view.getStatusLabel().setText("❌ Could not find any assessment patterns in the PDF.");
+                return;
             }
+
+            FileChooser saveChooser = new FileChooser();
+            saveChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+            File csvFile = saveChooser.showSaveDialog(stage);
+
+            if (csvFile != null) {
+                model.saveCSV(csvFile, parsed);
+                view.getStatusLabel().setText("✅ CSV created: " + csvFile.getName());
+            }
+
+        } catch (IOException ex) {
+            view.getStatusLabel().setText("⚠️ Error reading PDF: " + ex.getMessage());
         }
     }
 }

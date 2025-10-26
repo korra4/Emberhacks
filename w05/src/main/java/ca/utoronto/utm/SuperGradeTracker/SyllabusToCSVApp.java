@@ -11,9 +11,9 @@ public class SyllabusToCSVApp extends Application {
         SyllabusView view = new SyllabusView();
         new SyllabusController(model, view, stage);
 
-        Scene scene = new Scene(view, 500, 400);
+        Scene scene = new Scene(view, 500, 300);
         stage.setScene(scene);
-        stage.setTitle("Syllabus to CSV Grade Tracker");
+        stage.setTitle("Syllabus PDF to CSV Tracker");
         stage.show();
     }
 
