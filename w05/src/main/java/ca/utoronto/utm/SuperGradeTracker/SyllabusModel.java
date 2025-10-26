@@ -19,6 +19,8 @@ import java.io.IOException;
 
 public class SyllabusModel {
 
+    private String csv;
+
     // Send the PDF directly to Gemini and get CSV
     public String generateCSVFromPDF(File pdfFile) throws Exception {
         // String apiKey = System.getenv("GOOGLE_API_KEY");
@@ -64,7 +66,9 @@ public class SyllabusModel {
             throw new IOException("Gemini API returned empty CSV output.");
         }
 
-        return csvOutput.trim();
+        this.csv = csvOutput.trim();
+
+        return this.csv;
     }
 
     // Save CSV text to file
