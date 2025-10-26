@@ -4,6 +4,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
+import java.util.Objects;
 
 public class SyllabusView extends VBox {
 
@@ -19,7 +23,17 @@ public class SyllabusView extends VBox {
         this.setStyle("-fx-font-size: 36px;");
 
         this.setStyle(this.getStyle() + " -fx-background-color: linear-gradient(to bottom right, #bdcff8, #a6d7e6);");
+        this.setStyle(this.getStyle() + " -fx-border-color: rgba(255,255,255,0.3); -fx-border-radius: 20; -fx-border-width: 2;");
 
+
+        System.out.println(getClass().getResource("/ca/utoronto/utm/SuperGradeTracker/SuperGradeTracker.png"));
+        ImageView logoView = new ImageView(
+                new Image(Objects.requireNonNull(
+                        getClass().getResourceAsStream("/ca/utoronto/utm/SuperGradeTracker/SuperGradeTracker.png")
+                ))
+        );
+        logoView.setFitWidth(150);  // adjust width
+        logoView.setPreserveRatio(true); // keep aspect ratio
 
         // 🔹 Hover + Click Interactions for Buttons
         selectPDFButton.setOnMouseEntered(e -> selectPDFButton.setStyle(
@@ -78,6 +92,7 @@ public class SyllabusView extends VBox {
 
 
         this.getChildren().addAll(
+                logoView,
                 new Label("Upload your syllabus PDF:"),
                 selectPDFButton,
                 fileLabel,
