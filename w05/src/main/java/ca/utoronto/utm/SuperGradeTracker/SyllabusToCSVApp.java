@@ -12,7 +12,6 @@ public class SyllabusToCSVApp extends Application {
         new SyllabusController(model, view, stage);
 
         Scene scene = new Scene(view, 1024, 768);
-        // scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("Super Grade Tracker");
         stage.show();
