@@ -6,6 +6,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 
 import java.util.Objects;
 
@@ -34,6 +35,14 @@ public class SyllabusView extends VBox {
         );
         logoView.setFitWidth(150);  // adjust width
         logoView.setPreserveRatio(true); // keep aspect ratio
+
+        Label titleLabel = new Label("Super Grade Tracker");
+        titleLabel.setStyle("-fx-font-size: 67px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+
+        HBox headerBox = new HBox(15); // spacing between logo and text
+        headerBox.setAlignment(Pos.CENTER);
+        headerBox.getChildren().addAll(logoView, titleLabel);
+        VBox.setMargin(headerBox, new Insets(0, 0, 40, 0)); // top, right, bottom, left
 
         // 🔹 Hover + Click Interactions for Buttons
         selectPDFButton.setOnMouseEntered(e -> selectPDFButton.setStyle(
@@ -92,7 +101,7 @@ public class SyllabusView extends VBox {
 
 
         this.getChildren().addAll(
-                logoView,
+                headerBox,
                 new Label("Upload your syllabus PDF:"),
                 selectPDFButton,
                 fileLabel,
