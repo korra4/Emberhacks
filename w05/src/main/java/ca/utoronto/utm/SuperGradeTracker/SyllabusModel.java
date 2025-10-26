@@ -1,13 +1,22 @@
 package ca.utoronto.utm.SuperGradeTracker;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
+import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
 public class SyllabusModel {
 
+    // Extract text from PDF using PDFBox
+    public String extractTextFromPDF(File file) throws IOException {
+        try (PDDocument document = PDDocument.load(file)) {
+            PDFTextStripper stripper = new PDFTextStripper();
+            return stripper.getText(document);
+        }
+    }
+
+    // Parse the text for assessments and weights
     public List<String[]> parseSyllabus(String text) {
         List<String[]> results = new ArrayList<>();
         Pattern pattern = Pattern.compile("([\\w\\s]+)\\s*[-:]\\s*(\\d+)%");
@@ -21,6 +30,7 @@ public class SyllabusModel {
         return results;
     }
 
+    // Save to CSV
     public void saveCSV(File file, List<String[]> data) throws IOException {
         try (FileWriter writer = new FileWriter(file)) {
             writer.write("Assessment,Weight (%),Grade (%)\n");
