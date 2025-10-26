@@ -6,8 +6,11 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
-import com.google.genai.*;
-import com.google.genai.types.*;
+import com.google.genai.Client;
+import com.google.genai.types.GenerateContentResponse;
+import com.google.ai.client.generativeai.Client;
+import com.google.ai.client.generativeai.type.Content;
+import com.google.ai.client.generativeai.type.GenerateContentResponse;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -22,9 +25,8 @@ public class SyllabusModel {
             throw new IOException("Missing GOOGLE_API_KEY environment variable");
         }
 
-        // Initialize Gemini Pro (supports text + PDF)
-        GenerativeModel model = new GenerativeModel.Builder()
-                .model("gemini-1.5-pro")
+        // Initialize Gemini Client (supports text + PDF)
+        Client client = new Client.Builder()
                 .apiKey(apiKey)
                 .build();
 
@@ -37,12 +39,9 @@ public class SyllabusModel {
         """;
 
         // Combine the text prompt and the PDF file in one request
-        GenerateContentResponse response = model.generateContent(
-                new GenerateContentRequest.Builder()
-                        .addContent(Content.ofText(prompt))
-                        .addContent(Content.ofFile(pdfFile))
-                        .build()
-        );
+        GenerateContentResponse response = client.models()
+                .generateContent("gemini-1.5-pro",
+                        Content.of(prompt, pdfFile));
 
         String csvOutput = response.getText();
         if (csvOutput == null || csvOutput.isBlank()) {
